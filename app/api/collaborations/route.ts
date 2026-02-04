@@ -108,7 +108,6 @@ export async function POST(request: NextRequest) {
         description: description || null,
         notes: notes || null,
         status: collaborationStatus,
-        start_date: partner.service_type === 'SELF_SERVICE' ? new Date().toISOString() : null,
       })
       .select(`
         *,
