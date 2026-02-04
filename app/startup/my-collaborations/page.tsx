@@ -85,8 +85,11 @@ export default function MyCollaborationsPage() {
     }
   }
 
+  const selfServiceCollabs = collaborations.filter(
+    (c) => c.status === 'SELF_ACTIVATED'
+  )
   const activeCollabs = collaborations.filter(
-    (c) => ['SELF_ACTIVATED', 'REQUESTED', 'REVIEWING', 'IN_PROGRESS'].includes(c.status)
+    (c) => ['REQUESTED', 'REVIEWING', 'IN_PROGRESS'].includes(c.status)
   )
   const completedCollabs = collaborations.filter(
     (c) => c.status === 'COMPLETED'
@@ -105,6 +108,66 @@ export default function MyCollaborationsPage() {
         <h1 className="text-2xl font-bold">내 협업 현황</h1>
         <p className="text-gray-500">파트너사 협업 진행 상태를 확인하세요</p>
       </div>
+
+      {/* Self-Service Benefits */}
+      {selfServiceCollabs.length > 0 && (
+        <section>
+          <h2 className="text-lg font-semibold mb-4">
+            이용 중인 혜택 ({selfServiceCollabs.length})
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {selfServiceCollabs.map((collab) => (
+              <Card key={collab.id} className="border-green-200 bg-green-50/30">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-lg">
+                        {collab.partner?.name || 'Unknown'}
+                      </CardTitle>
+                      <Badge
+                        style={{
+                          backgroundColor: '#3b82f6' + '20',
+                          color: '#3b82f6',
+                        }}
+                      >
+                        {collab.partner?.category || '미분류'}
+                      </Badge>
+                    </div>
+                    <Badge className="bg-green-100 text-green-700">
+                      이용 중
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">이용 시작일</span>
+                      <span>{formatDate(collab.created_at)}</span>
+                    </div>
+                    {collab.partner?.estimated_saving && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">추정 절감</span>
+                        <span className="text-green-600">
+                          {formatCurrency(collab.partner?.estimated_saving)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {collab.partner?.self_service_info && (
+                    <div className="mt-4 p-3 bg-white rounded border">
+                      <p className="text-xs text-green-700 font-medium mb-1">전용코드</p>
+                      <p className="text-sm font-mono bg-gray-50 p-2 rounded">
+                        {collab.partner?.self_service_info}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Active Collaborations */}
       <section>
@@ -159,14 +222,6 @@ export default function MyCollaborationsPage() {
                     )}
                   </div>
 
-                  {collab.status === 'SELF_ACTIVATED' && collab.partner?.self_service_info && (
-                    <div className="mt-4 p-3 bg-green-50 rounded">
-                      <p className="text-xs text-green-700 font-medium mb-1">이용 정보</p>
-                      <p className="text-sm font-mono bg-white p-2 rounded border">
-                        {collab.partner?.self_service_info}
-                      </p>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
             ))}
