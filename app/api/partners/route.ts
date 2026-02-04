@@ -40,7 +40,10 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, description, category, contact_name, contact_email, website, logo_url } = body
+    const {
+      name, description, category, contact_name, contact_email, website, logo_url,
+      service_type, benefits, usage_guide, self_service_info, estimated_saving
+    } = body
 
     if (!name) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
@@ -57,6 +60,11 @@ export async function POST(request: NextRequest) {
         website: website || null,
         logo_url: logo_url || null,
         is_active: true,
+        service_type: service_type || 'SELF_SERVICE',
+        benefits: benefits || null,
+        usage_guide: usage_guide || null,
+        self_service_info: self_service_info || null,
+        estimated_saving: estimated_saving ? parseInt(estimated_saving) : null,
       })
       .select()
       .single()

@@ -25,6 +25,11 @@ interface Partner {
   contact_email?: string | null
   website?: string | null
   is_active?: boolean
+  service_type?: 'SELF_SERVICE' | 'APPROVAL_REQUIRED'
+  benefits?: string | null
+  usage_guide?: string | null
+  self_service_info?: string | null
+  estimated_saving?: number | null
 }
 
 
@@ -35,6 +40,11 @@ const initialFormData = {
   contact_name: '',
   contact_email: '',
   website: '',
+  service_type: 'SELF_SERVICE' as 'SELF_SERVICE' | 'APPROVAL_REQUIRED',
+  benefits: '',
+  usage_guide: '',
+  self_service_info: '',
+  estimated_saving: '',
 }
 
 export default function PartnersPage() {
@@ -110,6 +120,11 @@ export default function PartnersPage() {
       contact_name: partner.contact_name || '',
       contact_email: partner.contact_email || '',
       website: partner.website || '',
+      service_type: partner.service_type || 'SELF_SERVICE',
+      benefits: partner.benefits || '',
+      usage_guide: partner.usage_guide || '',
+      self_service_info: partner.self_service_info || '',
+      estimated_saving: partner.estimated_saving?.toString() || '',
     })
     setIsModalOpen(true)
   }
@@ -143,9 +158,8 @@ export default function PartnersPage() {
             <TableRow>
               <TableHead>파트너사</TableHead>
               <TableHead>카테고리</TableHead>
-              <TableHead>연락처</TableHead>
-              <TableHead>웹사이트</TableHead>
-              <TableHead>평점</TableHead>
+              <TableHead>서비스 타입</TableHead>
+              <TableHead>예상 절감</TableHead>
               <TableHead>상태</TableHead>
               <TableHead className="text-right">작업</TableHead>
             </TableRow>
@@ -167,12 +181,15 @@ export default function PartnersPage() {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {partner.contact_email || '-'}
+                  <Badge variant={partner.service_type === 'SELF_SERVICE' ? 'success' : 'default'}>
+                    {partner.service_type === 'SELF_SERVICE' ? '즉시 이용' : '승인 필요'}
+                  </Badge>
                 </TableCell>
                 <TableCell>
-                  {partner.website || '-'}
+                  {partner.estimated_saving
+                    ? `${(partner.estimated_saving / 10000).toLocaleString()}만원`
+                    : '-'}
                 </TableCell>
-                <TableCell>-</TableCell>
                 <TableCell>
                   <Badge variant={partner.is_active ? 'success' : 'secondary'}>
                     {partner.is_active ? '활성' : '비활성'}
@@ -298,6 +315,57 @@ export default function PartnersPage() {
             value={formData.website}
             onChange={(e) => setFormData({ ...formData, website: e.target.value })}
           />
+
+          <div className="border-t pt-4 mt-4">
+            <h4 className="font-medium mb-3">서비스 정보</h4>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  서비스 타입
+                </label>
+                <select
+                  value={formData.service_type}
+                  onChange={(e) => setFormData({ ...formData, service_type: e.target.value as 'SELF_SERVICE' | 'APPROVAL_REQUIRED' })}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="SELF_SERVICE">셀프서비스 (즉시 이용)</option>
+                  <option value="APPROVAL_REQUIRED">승인 필요</option>
+                </select>
+              </div>
+
+              <Textarea
+                label="혜택"
+                value={formData.benefits}
+                onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
+                placeholder="예: 최대 $10,000 크레딧 제공, 3개월 무료 이용"
+              />
+
+              <Textarea
+                label="이용 가이드"
+                value={formData.usage_guide}
+                onChange={(e) => setFormData({ ...formData, usage_guide: e.target.value })}
+                placeholder="이용 방법을 단계별로 작성해주세요"
+              />
+
+              {formData.service_type === 'SELF_SERVICE' && (
+                <Textarea
+                  label="셀프서비스 정보"
+                  value={formData.self_service_info}
+                  onChange={(e) => setFormData({ ...formData, self_service_info: e.target.value })}
+                  placeholder="쿠폰 코드, 신청 링크 등"
+                />
+              )}
+
+              <Input
+                label="예상 절감 비용 (원)"
+                type="number"
+                value={formData.estimated_saving}
+                onChange={(e) => setFormData({ ...formData, estimated_saving: e.target.value })}
+                placeholder="예: 10000000"
+              />
+            </div>
+          </div>
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={handleCloseModal}>

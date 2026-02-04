@@ -46,6 +46,11 @@ export async function PUT(
         contact_name: body.contact_name || null,
         contact_email: body.contact_email || null,
         website: body.website || null,
+        service_type: body.service_type || 'SELF_SERVICE',
+        benefits: body.benefits || null,
+        usage_guide: body.usage_guide || null,
+        self_service_info: body.self_service_info || null,
+        estimated_saving: body.estimated_saving ? parseInt(body.estimated_saving) : null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', params.id)
