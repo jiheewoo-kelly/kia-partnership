@@ -32,6 +32,12 @@ interface Partner {
   estimated_saving?: number | null
 }
 
+interface Category {
+  id: string
+  name: string
+  color?: string
+}
+
 
 const initialFormData = {
   name: '',
@@ -49,6 +55,7 @@ const initialFormData = {
 
 export default function PartnersPage() {
   const [partners, setPartners] = useState<Partner[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
@@ -62,9 +69,16 @@ export default function PartnersPage() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch('/api/partners')
-      const data = await res.json()
-      setPartners(data)
+      const [partnersRes, categoriesRes] = await Promise.all([
+        fetch('/api/partners'),
+        fetch('/api/categories'),
+      ])
+      const [partnersData, categoriesData] = await Promise.all([
+        partnersRes.json(),
+        categoriesRes.json(),
+      ])
+      setPartners(partnersData)
+      setCategories(categoriesData)
     } catch (error) {
       console.error('Failed to fetch data:', error)
     } finally {
@@ -289,12 +303,23 @@ export default function PartnersPage() {
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
 
-          <Input
-            label="카테고리"
-            value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            placeholder="예: AI/ML, Battery/Energy"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              카테고리
+            </label>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">카테고리 선택</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Input
