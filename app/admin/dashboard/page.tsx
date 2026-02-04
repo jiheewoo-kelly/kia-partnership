@@ -20,6 +20,10 @@ export default async function AdminDashboard() {
     supabase.from('reviews').select('*'),
   ])
 
+  // Debug: log data
+  console.log('Partners from Supabase:', partners)
+  console.log('Startups from Supabase:', startups)
+
   // Calculate stats
   const partnersCount = partners?.filter(p => p.is_active).length || 0
   const startupsCount = startups?.length || 0
@@ -50,6 +54,7 @@ export default async function AdminDashboard() {
       <div>
         <h1 className="text-2xl font-bold">대시보드</h1>
         <p className="text-gray-500">파트너십 현황을 한눈에 확인하세요</p>
+        <p className="text-xs text-red-500">Debug: partners={JSON.stringify(partners?.length)}, startups={JSON.stringify(startups?.length)}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
