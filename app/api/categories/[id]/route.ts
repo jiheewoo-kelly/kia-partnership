@@ -42,6 +42,7 @@ export async function PUT(
       .update({
         name: body.name,
         description: body.description || null,
+        color: body.color || '#3b82f6',
         updated_at: new Date().toISOString(),
       })
       .eq('id', params.id)

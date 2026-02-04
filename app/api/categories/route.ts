@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, description } = body
+    const { name, description, color } = body
 
     if (!name) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
       .insert({
         name,
         description: description || null,
+        color: color || '#3b82f6',
       })
       .select()
       .single()
