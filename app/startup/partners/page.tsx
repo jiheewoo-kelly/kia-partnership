@@ -16,11 +16,11 @@ interface Partner {
   name: string
   description: string | null
   category: { id: string; name: string; color: string }
-  serviceType: 'SELF_SERVICE' | 'APPROVAL_REQUIRED'
+  service_type: 'SELF_SERVICE' | 'APPROVAL_REQUIRED'
   benefits: string | null
-  usageGuide: string | null
-  selfServiceInfo: string | null
-  estimatedSaving: number | null
+  usage_guide: string | null
+  self_service_info: string | null
+  estimated_saving: number | null
   status: 'ACTIVE' | 'INACTIVE'
   avgRating: number | null
   reviewCount: number
@@ -76,7 +76,7 @@ export default function PartnersPage() {
     if (categoryFilter && partner.category.id !== categoryFilter) {
       return false
     }
-    if (typeFilter && partner.serviceType !== typeFilter) {
+    if (typeFilter && partner.service_type !== typeFilter) {
       return false
     }
     return true
@@ -217,10 +217,10 @@ export default function PartnersPage() {
                   </Badge>
                 </div>
                 <Badge
-                  variant={partner.serviceType === 'SELF_SERVICE' ? 'success' : 'default'}
+                  variant={partner.service_type === 'SELF_SERVICE' ? 'success' : 'default'}
                   className="flex items-center gap-1"
                 >
-                  {partner.serviceType === 'SELF_SERVICE' ? (
+                  {partner.service_type === 'SELF_SERVICE' ? (
                     <>
                       <Zap className="h-3 w-3" />
                       즉시 이용
@@ -249,9 +249,9 @@ export default function PartnersPage() {
                 ) : (
                   <span className="text-sm text-gray-400">아직 리뷰 없음</span>
                 )}
-                {partner.estimatedSaving && (
+                {partner.estimated_saving && (
                   <span className="text-sm font-medium text-green-600">
-                    ~{formatCurrency(partner.estimatedSaving)} 절감
+                    ~{formatCurrency(partner.estimated_saving)} 절감
                   </span>
                 )}
               </div>
@@ -285,9 +285,9 @@ export default function PartnersPage() {
                 {selectedPartner.category?.name || '미분류'}
               </Badge>
               <Badge
-                variant={selectedPartner.serviceType === 'SELF_SERVICE' ? 'success' : 'default'}
+                variant={selectedPartner.service_type === 'SELF_SERVICE' ? 'success' : 'default'}
               >
-                {selectedPartner.serviceType === 'SELF_SERVICE' ? '셀프서비스' : '승인 필요'}
+                {selectedPartner.service_type === 'SELF_SERVICE' ? '셀프서비스' : '승인 필요'}
               </Badge>
               {selectedPartner.avgRating && (
                 <div className="flex items-center gap-1 ml-auto">
@@ -306,18 +306,18 @@ export default function PartnersPage() {
               <p className="text-blue-700 whitespace-pre-wrap">
                 {selectedPartner.benefits}
               </p>
-              {selectedPartner.estimatedSaving && (
+              {selectedPartner.estimated_saving && (
                 <p className="mt-2 text-sm text-blue-600">
-                  추정 절감 비용: {formatCurrency(selectedPartner.estimatedSaving)}
+                  추정 절감 비용: {formatCurrency(selectedPartner.estimated_saving)}
                 </p>
               )}
             </div>
 
-            {selectedPartner.usageGuide && (
+            {selectedPartner.usage_guide && (
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h4 className="font-medium text-gray-800 mb-2">이용 가이드</h4>
                 <p className="text-gray-600 whitespace-pre-wrap">
-                  {selectedPartner.usageGuide}
+                  {selectedPartner.usage_guide}
                 </p>
               </div>
             )}
@@ -326,7 +326,7 @@ export default function PartnersPage() {
               <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
                 닫기
               </Button>
-              {selectedPartner.serviceType === 'SELF_SERVICE' ? (
+              {selectedPartner.service_type === 'SELF_SERVICE' ? (
                 <Button onClick={handleSelfService} disabled={submitting}>
                   <Zap className="h-4 w-4 mr-2" />
                   즉시 이용하기
@@ -359,7 +359,7 @@ export default function PartnersPage() {
                 {selectedPartner.name} 이용 정보
               </h4>
               <p className="text-green-700 whitespace-pre-wrap font-mono text-sm bg-white p-3 rounded border">
-                {selectedPartner.selfServiceInfo}
+                {selectedPartner.self_service_info}
               </p>
             </div>
             <p className="text-sm text-gray-500">
@@ -386,11 +386,11 @@ export default function PartnersPage() {
             <p>
               <strong>{selectedPartner.name}</strong>에 협업을 요청합니다.
             </p>
-            {selectedPartner.usageGuide && (
+            {selectedPartner.usage_guide && (
               <div className="bg-yellow-50 p-3 rounded text-sm">
                 <strong>사전 준비사항:</strong>
                 <p className="mt-1 text-gray-600 whitespace-pre-wrap">
-                  {selectedPartner.usageGuide}
+                  {selectedPartner.usage_guide}
                 </p>
               </div>
             )}
