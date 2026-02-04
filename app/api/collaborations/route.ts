@@ -55,9 +55,10 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { partner_id, title, description, notes } = body
+    const { partner_id, partnerId, title, description, notes } = body
+    const partnerIdValue = partner_id || partnerId
 
-    if (!partner_id) {
+    if (!partnerIdValue) {
       return NextResponse.json({ error: 'Partner ID is required' }, { status: 400 })
     }
 
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
     const { data: partner, error: partnerError } = await supabase
       .from('partners')
       .select('*')
-      .eq('id', partner_id)
+      .eq('id', partnerIdValue)
       .single()
 
     if (partnerError || !partner) {
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
       .from('collaborations')
       .select('id')
       .eq('startup_id', startup_id)
-      .eq('partner_id', partner_id)
+      .eq('partner_id', partnerIdValue)
       .in('status', ['PENDING', 'IN_PROGRESS'])
       .single()
 
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
       .from('collaborations')
       .insert({
         startup_id,
-        partner_id,
+        partner_id: partnerIdValue,
         title: title || `${partner.name} 협업`,
         description: description || null,
         notes: notes || null,

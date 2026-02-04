@@ -5,6 +5,9 @@ import { supabase } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions)
+    const isAdmin = session?.user?.role === 'ADMIN'
+
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
     const isActive = searchParams.get('isActive')
@@ -25,7 +28,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch partners' }, { status: 500 })
     }
 
-    return NextResponse.json(partners)
+    // 관리자가 아니면 쿠폰 코드(self_service_info) 숨기기
+    const safePartners = isAdmin
+      ? partners
+      : partners?.map(p => ({ ...p, self_service_info: null }))
+
+    return NextResponse.json(safePartners)
   } catch (error) {
     console.error('Failed to fetch partners:', error)
     return NextResponse.json({ error: 'Failed to fetch partners' }, { status: 500 })
