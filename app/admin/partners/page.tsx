@@ -375,10 +375,10 @@ export default function PartnersPage() {
 
               {formData.service_type === 'SELF_SERVICE' && (
                 <Textarea
-                  label="셀프서비스 정보"
+                  label="전용코드"
                   value={formData.self_service_info}
                   onChange={(e) => setFormData({ ...formData, self_service_info: e.target.value })}
-                  placeholder="쿠폰 코드, 신청 링크 등"
+                  placeholder="스타트업에게 제공할 전용 코드 또는 링크"
                 />
               )}
 
