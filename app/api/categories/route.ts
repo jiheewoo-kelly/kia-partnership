@@ -15,7 +15,20 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
     }
 
-    return NextResponse.json(categories)
+    // Get partner counts for each category
+    const { data: partners } = await supabase
+      .from('partners')
+      .select('category')
+
+    const categoriesWithCount = categories?.map(cat => {
+      const partnerCount = partners?.filter(p => p.category === cat.name).length || 0
+      return {
+        ...cat,
+        _count: { partners: partnerCount }
+      }
+    })
+
+    return NextResponse.json(categoriesWithCount)
   } catch (error) {
     console.error('Failed to fetch categories:', error)
     return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
