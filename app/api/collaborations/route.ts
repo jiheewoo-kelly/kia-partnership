@@ -82,15 +82,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Check for existing active collaboration
-    const { data: existing } = await supabase
+    const { data: existingList } = await supabase
       .from('collaborations')
       .select('id')
       .eq('startup_id', startup_id)
       .eq('partner_id', partnerIdValue)
       .in('status', ['PENDING', 'IN_PROGRESS', 'SELF_ACTIVATED', 'REQUESTED', 'REVIEWING'])
-      .single()
 
-    if (existing) {
+    if (existingList && existingList.length > 0) {
       return NextResponse.json({ error: '이미 진행 중인 협업이 있습니다' }, { status: 400 })
     }
 
