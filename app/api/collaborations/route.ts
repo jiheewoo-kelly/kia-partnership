@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Supabase error:', error)
-      return NextResponse.json({ error: 'Failed to create collaboration' }, { status: 500 })
+      return NextResponse.json({ error: `Failed to create collaboration: ${error.message}` }, { status: 500 })
     }
 
     return NextResponse.json(collaboration, { status: 201 })
