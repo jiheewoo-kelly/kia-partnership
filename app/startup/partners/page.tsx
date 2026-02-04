@@ -15,15 +15,13 @@ interface Partner {
   id: string
   name: string
   description: string | null
-  category: { id: string; name: string; color: string }
+  category: string | null
   service_type: 'SELF_SERVICE' | 'APPROVAL_REQUIRED'
   benefits: string | null
   usage_guide: string | null
   self_service_info: string | null
   estimated_saving: number | null
-  status: 'ACTIVE' | 'INACTIVE'
-  avgRating: number | null
-  reviewCount: number
+  is_active: boolean
 }
 
 interface Category {
@@ -69,11 +67,16 @@ export default function PartnersPage() {
     }
   }
 
+  const getCategoryColor = (categoryName: string | null) => {
+    const cat = categories.find(c => c.name === categoryName)
+    return cat?.color || '#3b82f6'
+  }
+
   const filteredPartners = partners.filter((partner) => {
     if (search && !partner.name.toLowerCase().includes(search.toLowerCase())) {
       return false
     }
-    if (categoryFilter && partner.category.id !== categoryFilter) {
+    if (categoryFilter && partner.category !== categoryFilter) {
       return false
     }
     if (typeFilter && partner.service_type !== typeFilter) {
@@ -177,7 +180,7 @@ export default function PartnersPage() {
           >
             <option value="">전체 카테고리</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
+              <option key={cat.id} value={cat.name}>
                 {cat.name}
               </option>
             ))}
@@ -208,12 +211,12 @@ export default function PartnersPage() {
                   <CardTitle className="text-lg">{partner.name}</CardTitle>
                   <Badge
                     style={{
-                      backgroundColor: (partner.category?.color || '#3b82f6') + '20',
-                      color: partner.category?.color || '#3b82f6',
+                      backgroundColor: getCategoryColor(partner.category) + '20',
+                      color: getCategoryColor(partner.category),
                     }}
                     className="mt-1"
                   >
-                    {partner.category?.name || '미분류'}
+                    {partner.category || '미분류'}
                   </Badge>
                 </div>
                 <Badge
@@ -278,11 +281,11 @@ export default function PartnersPage() {
             <div className="flex items-center gap-2">
               <Badge
                 style={{
-                  backgroundColor: (selectedPartner.category?.color || '#3b82f6') + '20',
-                  color: selectedPartner.category?.color || '#3b82f6',
+                  backgroundColor: getCategoryColor(selectedPartner.category) + '20',
+                  color: getCategoryColor(selectedPartner.category),
                 }}
               >
-                {selectedPartner.category?.name || '미분류'}
+                {selectedPartner.category || '미분류'}
               </Badge>
               <Badge
                 variant={selectedPartner.service_type === 'SELF_SERVICE' ? 'success' : 'default'}
