@@ -85,7 +85,7 @@ export default function ReviewsPage() {
                 </TableCell>
                 <TableCell>
                   <div>
-                    <div>{review.collaboration.partner.name}</div>
+                    <div>{review.collaboration?.partner?.name || 'Unknown'}</div>
                     <Badge
                       style={{
                         backgroundColor: (review.collaboration?.partner?.category?.color || '#3b82f6') + '20',
@@ -93,7 +93,7 @@ export default function ReviewsPage() {
                       }}
                       className="text-xs"
                     >
-                      {review.collaboration.partner.category.name}
+                      {review.collaboration?.partner?.category?.name || '미분류'}
                     </Badge>
                   </div>
                 </TableCell>

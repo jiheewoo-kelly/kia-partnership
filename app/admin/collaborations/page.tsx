@@ -88,7 +88,7 @@ export default function CollaborationsPage() {
   }
 
   const handleApprove = (collab: Collaboration) => {
-    if (confirm(`${collab.startup.name}의 ${collab.partner.name} 협업을 승인하시겠습니까?`)) {
+    if (confirm(`${collab.startup.name}의 ${collab.partner?.name || 'Unknown'} 협업을 승인하시겠습니까?`)) {
       updateStatus(collab.id, 'IN_PROGRESS')
     }
   }
@@ -163,7 +163,7 @@ export default function CollaborationsPage() {
                 </TableCell>
                 <TableCell>
                   <div>
-                    <div>{collab.partner.name}</div>
+                    <div>{collab.partner?.name || 'Unknown'}</div>
                     <Badge
                       style={{
                         backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
@@ -171,7 +171,7 @@ export default function CollaborationsPage() {
                       }}
                       className="text-xs"
                     >
-                      {collab.partner.category.name}
+                      {collab.partner?.category?.name || '미분류'}
                     </Badge>
                   </div>
                 </TableCell>

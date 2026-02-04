@@ -121,7 +121,7 @@ export default function MyCollaborationsPage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-lg">
-                        {collab.partner.name}
+                        {collab.partner?.name || 'Unknown'}
                       </CardTitle>
                       <Badge
                         style={{
@@ -129,7 +129,7 @@ export default function MyCollaborationsPage() {
                           color: collab.partner?.category?.color || '#3b82f6',
                         }}
                       >
-                        {collab.partner.category.name}
+                        {collab.partner?.category?.name || '미분류'}
                       </Badge>
                     </div>
                     <Badge className={getStatusColor(collab.status)}>
@@ -189,7 +189,7 @@ export default function MyCollaborationsPage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-lg">
-                        {collab.partner.name}
+                        {collab.partner?.name || 'Unknown'}
                       </CardTitle>
                       <Badge
                         style={{
@@ -197,7 +197,7 @@ export default function MyCollaborationsPage() {
                           color: collab.partner?.category?.color || '#3b82f6',
                         }}
                       >
-                        {collab.partner.category.name}
+                        {collab.partner?.category?.name || '미분류'}
                       </Badge>
                     </div>
                     <Badge className={getStatusColor(collab.status)}>
@@ -262,7 +262,7 @@ export default function MyCollaborationsPage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-lg">
-                        {collab.partner.name}
+                        {collab.partner?.name || 'Unknown'}
                       </CardTitle>
                       <Badge
                         style={{
@@ -270,7 +270,7 @@ export default function MyCollaborationsPage() {
                           color: collab.partner?.category?.color || '#3b82f6',
                         }}
                       >
-                        {collab.partner.category.name}
+                        {collab.partner?.category?.name || '미분류'}
                       </Badge>
                     </div>
                     <Badge className={getStatusColor(collab.status)}>

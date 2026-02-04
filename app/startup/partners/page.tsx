@@ -213,7 +213,7 @@ export default function PartnersPage() {
                     }}
                     className="mt-1"
                   >
-                    {partner.category.name}
+                    {partner.category?.name || '미분류'}
                   </Badge>
                 </div>
                 <Badge
@@ -282,7 +282,7 @@ export default function PartnersPage() {
                   color: selectedPartner.category?.color || '#3b82f6',
                 }}
               >
-                {selectedPartner.category.name}
+                {selectedPartner.category?.name || '미분류'}
               </Badge>
               <Badge
                 variant={selectedPartner.serviceType === 'SELF_SERVICE' ? 'success' : 'default'}
