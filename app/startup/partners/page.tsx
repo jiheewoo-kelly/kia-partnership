@@ -22,6 +22,8 @@ interface Partner {
   self_service_info: string | null
   estimated_saving: number | null
   is_active: boolean
+  avgRating?: number | null
+  reviewCount?: number
 }
 
 interface Category {
