@@ -20,19 +20,19 @@ import { formatDate, formatCurrency, getStatusLabel, getStatusColor } from '@/li
 
 interface Collaboration {
   id: string
-  startup: { id: string; name: string }
+  startup: { id: string; name: string } | null
   partner: {
     id: string
     name: string
-    category: { name: string; color: string }
-    estimatedSaving: number | null
-  }
+    category: string | null
+    estimated_saving: number | null
+  } | null
   status: string
-  rejectionReason: string | null
-  requestDate: string
-  startDate: string | null
-  endDate: string | null
-  actualSaving: number | null
+  rejection_reason: string | null
+  created_at: string
+  start_date: string | null
+  end_date: string | null
+  actual_saving: number | null
   notes: string | null
   review: { rating: number; comment: string | null } | null
 }
@@ -88,7 +88,7 @@ export default function CollaborationsPage() {
   }
 
   const handleApprove = (collab: Collaboration) => {
-    if (confirm(`${collab.startup.name}의 ${collab.partner?.name || 'Unknown'} 협업을 승인하시겠습니까?`)) {
+    if (confirm(`${collab.startup?.name || 'Unknown'}의 ${collab.partner?.name || 'Unknown'} 협업을 승인하시겠습니까?`)) {
       updateStatus(collab.id, 'IN_PROGRESS')
     }
   }
@@ -112,7 +112,7 @@ export default function CollaborationsPage() {
 
   const openCompleteModal = (collab: Collaboration) => {
     setSelectedCollab(collab)
-    setActualSaving(collab.partner.estimatedSaving?.toString() || '')
+    setActualSaving(collab.partner?.estimated_saving?.toString() || '')
     setIsCompleteOpen(true)
   }
 
@@ -159,19 +159,19 @@ export default function CollaborationsPage() {
             {collaborations.map((collab) => (
               <TableRow key={collab.id}>
                 <TableCell className="font-medium">
-                  {collab.startup.name}
+                  {collab.startup?.name || 'Unknown'}
                 </TableCell>
                 <TableCell>
                   <div>
                     <div>{collab.partner?.name || 'Unknown'}</div>
                     <Badge
                       style={{
-                        backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
-                        color: collab.partner?.category?.color || '#3b82f6',
+                        backgroundColor: '#3b82f6' + '20',
+                        color: '#3b82f6',
                       }}
                       className="text-xs"
                     >
-                      {collab.partner?.category?.name || '미분류'}
+                      {collab.partner?.category || '미분류'}
                     </Badge>
                   </div>
                 </TableCell>
@@ -180,10 +180,10 @@ export default function CollaborationsPage() {
                     {getStatusLabel(collab.status)}
                   </Badge>
                 </TableCell>
-                <TableCell>{formatDate(collab.requestDate)}</TableCell>
+                <TableCell>{formatDate(collab.created_at)}</TableCell>
                 <TableCell>
-                  {collab.partner.estimatedSaving
-                    ? formatCurrency(collab.partner.estimatedSaving)
+                  {collab.partner?.estimated_saving
+                    ? formatCurrency(collab.partner.estimated_saving)
                     : '-'}
                 </TableCell>
                 <TableCell className="text-right">
@@ -247,11 +247,11 @@ export default function CollaborationsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">스타트업</p>
-                <p className="font-medium">{selectedCollab.startup.name}</p>
+                <p className="font-medium">{selectedCollab.startup?.name || 'Unknown'}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">파트너사</p>
-                <p className="font-medium">{selectedCollab.partner.name}</p>
+                <p className="font-medium">{selectedCollab.partner?.name || 'Unknown'}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -263,13 +263,13 @@ export default function CollaborationsPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">요청일</p>
-                <p>{formatDate(selectedCollab.requestDate)}</p>
+                <p>{formatDate(selectedCollab.created_at)}</p>
               </div>
             </div>
-            {selectedCollab.rejectionReason && (
+            {selectedCollab.rejection_reason && (
               <div className="bg-red-50 p-3 rounded">
                 <p className="text-sm text-red-600 font-medium">거절 사유</p>
-                <p className="text-red-700">{selectedCollab.rejectionReason}</p>
+                <p className="text-red-700">{selectedCollab.rejection_reason}</p>
               </div>
             )}
             {selectedCollab.notes && (
@@ -299,7 +299,7 @@ export default function CollaborationsPage() {
       >
         <div className="space-y-4">
           <p>
-            {selectedCollab?.startup.name}의 {selectedCollab?.partner.name} 협업을 거절합니다.
+            {selectedCollab?.startup?.name || 'Unknown'}의 {selectedCollab?.partner?.name || 'Unknown'} 협업을 거절합니다.
           </p>
           <Textarea
             label="거절 사유"
@@ -327,7 +327,7 @@ export default function CollaborationsPage() {
       >
         <div className="space-y-4">
           <p>
-            {selectedCollab?.startup.name}의 {selectedCollab?.partner.name} 협업을 완료 처리합니다.
+            {selectedCollab?.startup?.name || 'Unknown'}의 {selectedCollab?.partner?.name || 'Unknown'} 협업을 완료 처리합니다.
           </p>
           <Input
             label="실제 절감 비용 (원)"
