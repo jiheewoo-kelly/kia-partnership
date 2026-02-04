@@ -88,8 +88,8 @@ export default function ReviewsPage() {
                     <div>{review.collaboration.partner.name}</div>
                     <Badge
                       style={{
-                        backgroundColor: review.collaboration.partner.category.color + '20',
-                        color: review.collaboration.partner.category.color,
+                        backgroundColor: (review.collaboration?.partner?.category?.color || '#3b82f6') + '20',
+                        color: review.collaboration?.partner?.category?.color || '#3b82f6',
                       }}
                       className="text-xs"
                     >

@@ -208,8 +208,8 @@ export default function PartnersPage() {
                   <CardTitle className="text-lg">{partner.name}</CardTitle>
                   <Badge
                     style={{
-                      backgroundColor: partner.category.color + '20',
-                      color: partner.category.color,
+                      backgroundColor: (partner.category?.color || '#3b82f6') + '20',
+                      color: partner.category?.color || '#3b82f6',
                     }}
                     className="mt-1"
                   >
@@ -278,8 +278,8 @@ export default function PartnersPage() {
             <div className="flex items-center gap-2">
               <Badge
                 style={{
-                  backgroundColor: selectedPartner.category.color + '20',
-                  color: selectedPartner.category.color,
+                  backgroundColor: (selectedPartner.category?.color || '#3b82f6') + '20',
+                  color: selectedPartner.category?.color || '#3b82f6',
                 }}
               >
                 {selectedPartner.category.name}

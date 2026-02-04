@@ -166,8 +166,8 @@ export default function CollaborationsPage() {
                     <div>{collab.partner.name}</div>
                     <Badge
                       style={{
-                        backgroundColor: collab.partner.category.color + '20',
-                        color: collab.partner.category.color,
+                        backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
+                        color: collab.partner?.category?.color || '#3b82f6',
                       }}
                       className="text-xs"
                     >

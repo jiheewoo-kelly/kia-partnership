@@ -125,8 +125,8 @@ export default function MyCollaborationsPage() {
                       </CardTitle>
                       <Badge
                         style={{
-                          backgroundColor: collab.partner.category.color + '20',
-                          color: collab.partner.category.color,
+                          backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
+                          color: collab.partner?.category?.color || '#3b82f6',
                         }}
                       >
                         {collab.partner.category.name}
@@ -193,8 +193,8 @@ export default function MyCollaborationsPage() {
                       </CardTitle>
                       <Badge
                         style={{
-                          backgroundColor: collab.partner.category.color + '20',
-                          color: collab.partner.category.color,
+                          backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
+                          color: collab.partner?.category?.color || '#3b82f6',
                         }}
                       >
                         {collab.partner.category.name}
@@ -266,8 +266,8 @@ export default function MyCollaborationsPage() {
                       </CardTitle>
                       <Badge
                         style={{
-                          backgroundColor: collab.partner.category.color + '20',
-                          color: collab.partner.category.color,
+                          backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
+                          color: collab.partner?.category?.color || '#3b82f6',
                         }}
                       >
                         {collab.partner.category.name}
