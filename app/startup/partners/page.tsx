@@ -131,6 +131,14 @@ export default function PartnersPage() {
       })
 
       if (res.ok) {
+        const data = await res.json()
+        // 협업 생성 응답에서 partner.self_service_info를 가져와서 업데이트
+        if (data.partner?.self_service_info) {
+          setSelectedPartner({
+            ...selectedPartner,
+            self_service_info: data.partner.self_service_info,
+          })
+        }
         setIsSelfServiceOpen(true)
         setIsDetailOpen(false)
       } else {

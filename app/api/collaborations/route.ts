@@ -87,12 +87,17 @@ export async function POST(request: NextRequest) {
       .select('id')
       .eq('startup_id', startup_id)
       .eq('partner_id', partnerIdValue)
-      .in('status', ['PENDING', 'IN_PROGRESS'])
+      .in('status', ['PENDING', 'IN_PROGRESS', 'SELF_ACTIVATED', 'REQUESTED', 'REVIEWING'])
       .single()
 
     if (existing) {
       return NextResponse.json({ error: '이미 진행 중인 협업이 있습니다' }, { status: 400 })
     }
+
+    // Set status based on partner service type
+    const collaborationStatus = partner.service_type === 'SELF_SERVICE'
+      ? 'SELF_ACTIVATED'
+      : 'REQUESTED'
 
     const { data: collaboration, error } = await supabase
       .from('collaborations')
@@ -102,7 +107,8 @@ export async function POST(request: NextRequest) {
         title: title || `${partner.name} 협업`,
         description: description || null,
         notes: notes || null,
-        status: 'PENDING',
+        status: collaborationStatus,
+        start_date: partner.service_type === 'SELF_SERVICE' ? new Date().toISOString() : null,
       })
       .select(`
         *,

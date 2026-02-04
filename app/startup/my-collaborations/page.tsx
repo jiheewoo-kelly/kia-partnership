@@ -14,18 +14,18 @@ interface Collaboration {
   partner: {
     id: string
     name: string
-    category: { name: string; color: string }
-    selfServiceInfo: string | null
-    estimatedSaving: number | null
-  }
+    category: string | null
+    self_service_info: string | null
+    estimated_saving: number | null
+  } | null
   status: string
-  rejectionReason: string | null
-  requestDate: string
-  startDate: string | null
-  endDate: string | null
-  actualSaving: number | null
   notes: string | null
-  review: { id: string; rating: number; comment: string | null } | null
+  start_date: string | null
+  end_date: string | null
+  created_at: string
+  actual_saving?: number | null
+  rejection_reason?: string | null
+  review?: { id: string; rating: number; comment: string | null } | null
 }
 
 export default function MyCollaborationsPage() {
@@ -125,11 +125,11 @@ export default function MyCollaborationsPage() {
                       </CardTitle>
                       <Badge
                         style={{
-                          backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
-                          color: collab.partner?.category?.color || '#3b82f6',
+                          backgroundColor: '#3b82f6' + '20',
+                          color: '#3b82f6',
                         }}
                       >
-                        {collab.partner?.category?.name || '미분류'}
+                        {collab.partner?.category || '미분류'}
                       </Badge>
                     </div>
                     <Badge className={getStatusColor(collab.status)}>
@@ -141,29 +141,29 @@ export default function MyCollaborationsPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">요청일</span>
-                      <span>{formatDate(collab.requestDate)}</span>
+                      <span>{formatDate(collab.created_at)}</span>
                     </div>
-                    {collab.startDate && (
+                    {collab.start_date && (
                       <div className="flex justify-between">
                         <span className="text-gray-500">시작일</span>
-                        <span>{formatDate(collab.startDate)}</span>
+                        <span>{formatDate(collab.start_date)}</span>
                       </div>
                     )}
-                    {collab.partner.estimatedSaving && (
+                    {collab.partner?.estimated_saving && (
                       <div className="flex justify-between">
                         <span className="text-gray-500">추정 절감</span>
                         <span className="text-green-600">
-                          {formatCurrency(collab.partner.estimatedSaving)}
+                          {formatCurrency(collab.partner?.estimated_saving)}
                         </span>
                       </div>
                     )}
                   </div>
 
-                  {collab.status === 'SELF_ACTIVATED' && collab.partner.selfServiceInfo && (
+                  {collab.status === 'SELF_ACTIVATED' && collab.partner?.self_service_info && (
                     <div className="mt-4 p-3 bg-green-50 rounded">
                       <p className="text-xs text-green-700 font-medium mb-1">이용 정보</p>
                       <p className="text-sm font-mono bg-white p-2 rounded border">
-                        {collab.partner.selfServiceInfo}
+                        {collab.partner?.self_service_info}
                       </p>
                     </div>
                   )}
@@ -193,11 +193,11 @@ export default function MyCollaborationsPage() {
                       </CardTitle>
                       <Badge
                         style={{
-                          backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
-                          color: collab.partner?.category?.color || '#3b82f6',
+                          backgroundColor: '#3b82f6' + '20',
+                          color: '#3b82f6',
                         }}
                       >
-                        {collab.partner?.category?.name || '미분류'}
+                        {collab.partner?.category || '미분류'}
                       </Badge>
                     </div>
                     <Badge className={getStatusColor(collab.status)}>
@@ -210,15 +210,15 @@ export default function MyCollaborationsPage() {
                     <div className="flex justify-between">
                       <span className="text-gray-500">기간</span>
                       <span>
-                        {collab.startDate && formatDate(collab.startDate)} ~{' '}
-                        {collab.endDate && formatDate(collab.endDate)}
+                        {collab.start_date && formatDate(collab.start_date)} ~{' '}
+                        {collab.end_date && formatDate(collab.end_date)}
                       </span>
                     </div>
-                    {collab.actualSaving && (
+                    {collab.actual_saving && (
                       <div className="flex justify-between">
                         <span className="text-gray-500">절감 비용</span>
                         <span className="text-green-600 font-medium">
-                          {formatCurrency(collab.actualSaving)}
+                          {formatCurrency(collab.actual_saving)}
                         </span>
                       </div>
                     )}
@@ -266,11 +266,11 @@ export default function MyCollaborationsPage() {
                       </CardTitle>
                       <Badge
                         style={{
-                          backgroundColor: (collab.partner?.category?.color || '#3b82f6') + '20',
-                          color: collab.partner?.category?.color || '#3b82f6',
+                          backgroundColor: '#3b82f6' + '20',
+                          color: '#3b82f6',
                         }}
                       >
-                        {collab.partner?.category?.name || '미분류'}
+                        {collab.partner?.category || '미분류'}
                       </Badge>
                     </div>
                     <Badge className={getStatusColor(collab.status)}>
@@ -282,17 +282,17 @@ export default function MyCollaborationsPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">요청일</span>
-                      <span>{formatDate(collab.requestDate)}</span>
+                      <span>{formatDate(collab.created_at)}</span>
                     </div>
                   </div>
 
-                  {collab.rejectionReason && (
+                  {collab.rejection_reason && (
                     <div className="mt-4 p-3 bg-red-50 rounded">
                       <p className="text-xs text-red-700 font-medium mb-1">
                         거절 사유
                       </p>
                       <p className="text-sm text-red-600">
-                        {collab.rejectionReason}
+                        {collab.rejection_reason}
                       </p>
                     </div>
                   )}
@@ -312,7 +312,7 @@ export default function MyCollaborationsPage() {
         {selectedCollab && (
           <div className="space-y-4">
             <p>
-              <strong>{selectedCollab.partner.name}</strong> 협업에 대한 리뷰를
+              <strong>{selectedCollab.partner?.name}</strong> 협업에 대한 리뷰를
               작성해주세요.
             </p>
 
