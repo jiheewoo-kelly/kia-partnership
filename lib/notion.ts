@@ -5,6 +5,8 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const NEWS_DB_ID = process.env.NOTION_NEWS_DB_ID!;
 const PERKS_DB_ID = process.env.NOTION_PERKS_DB_ID!;
 const APPLICATIONS_DB_ID = process.env.NOTION_APPLICATIONS_DB_ID!;
+const PR_DB_ID = process.env.NOTION_PR_DB_ID!;
+const ISSUE_TICKET_DB_ID = process.env.NOTION_ISSUE_TICKET_DB_ID!;
 
 export interface NewsItem {
   id: string;
@@ -195,19 +197,22 @@ export async function submitApplication(data: {
   }
 
   // Portfolios DB에서 회사명으로 검색하여 relation 연결
-  try {
-    const portfolioSearch = await notion.databases.query({
-      database_id: process.env.NOTION_PORTFOLIOS_DB_ID || "",
-      filter: { property: "회사명", title: { equals: data.companyName } },
-      page_size: 1,
-    });
-    if (portfolioSearch.results.length > 0) {
-      properties["신청 회사"] = {
-        relation: [{ id: portfolioSearch.results[0].id }],
-      };
+  const portfoliosDbId = process.env.NOTION_PORTFOLIOS_DB_ID;
+  if (portfoliosDbId) {
+    try {
+      const portfolioSearch = await notion.databases.query({
+        database_id: portfoliosDbId,
+        filter: { property: "회사명", title: { equals: data.companyName } },
+        page_size: 1,
+      });
+      if (portfolioSearch.results.length > 0) {
+        properties["신청 회사"] = {
+          relation: [{ id: portfolioSearch.results[0].id }],
+        };
+      }
+    } catch (error) {
+      console.error("Portfolio lookup failed:", error);
     }
-  } catch (error) {
-    console.error("Portfolio lookup failed:", error);
   }
 
   const response = await notion.pages.create({
@@ -216,6 +221,148 @@ export async function submitApplication(data: {
   });
 
   return response;
+}
+
+export async function submitPRRequest(data: {
+  companyName: string;
+  articleTitle: string;
+  articleContent: string;
+  imageUrls: string[];
+  requestedDate: string;
+  contactName: string;
+  contactTitle: string;
+  contactEmail: string;
+  contactPhone: string;
+}) {
+  const properties: Record<string, any> = {
+    제목: {
+      title: [{ text: { content: `${data.companyName} - ${data.articleTitle}` } }],
+    },
+    기업명: {
+      rich_text: [{ text: { content: data.companyName } }],
+    },
+    "기사 제목": {
+      rich_text: [{ text: { content: data.articleTitle } }],
+    },
+    "기사 내용": {
+      rich_text: [{ text: { content: data.articleContent } }],
+    },
+    "배포 요청일": {
+      date: { start: data.requestedDate },
+    },
+    "담당자 이름": {
+      rich_text: [{ text: { content: data.contactName } }],
+    },
+    "담당자 직책": {
+      rich_text: [{ text: { content: data.contactTitle } }],
+    },
+    "담당자 이메일": {
+      email: data.contactEmail,
+    },
+    "담당자 연락처": {
+      phone_number: data.contactPhone,
+    },
+    상태: {
+      select: { name: "접수" },
+    },
+    신청일: {
+      date: { start: new Date().toISOString().split("T")[0] },
+    },
+  };
+
+  if (data.imageUrls.length > 0) {
+    properties["기사 이미지"] = {
+      files: data.imageUrls.map((url, i) => ({
+        name: `image-${i + 1}`,
+        type: "external",
+        external: { url },
+      })),
+    };
+  }
+
+  // Portfolios DB에서 회사명으로 검색하여 relation 연결
+  const portfoliosDbId = process.env.NOTION_PORTFOLIOS_DB_ID;
+  if (portfoliosDbId) {
+    try {
+      const search = await notion.databases.query({
+        database_id: portfoliosDbId,
+        filter: { property: "회사명", title: { equals: data.companyName } },
+        page_size: 1,
+      });
+      if (search.results.length > 0) {
+        properties["신청 회사"] = {
+          relation: [{ id: search.results[0].id }],
+        };
+      }
+    } catch (error) {
+      console.error("Portfolio lookup failed:", error);
+    }
+  }
+
+  return await notion.pages.create({
+    parent: { database_id: PR_DB_ID },
+    properties,
+  });
+}
+
+export async function submitSupportTicket(data: {
+  companyName: string;
+  requestContent: string;
+  contactName: string;
+  contactEmail: string;
+  issueType: string;
+  category?: string;
+}) {
+  const properties: Record<string, any> = {
+    이름: {
+      title: [{ text: { content: `[${data.category || data.issueType}] ${data.companyName}` } }],
+    },
+    "Issue Type": {
+      select: { name: data.category || data.issueType },
+    },
+    설명: {
+      rich_text: [{ text: { content: data.requestContent } }],
+    },
+    담당자: {
+      rich_text: [{ text: { content: data.contactName } }],
+    },
+    이메일: {
+      email: data.contactEmail,
+    },
+    상태: {
+      select: { name: "접수" },
+    },
+    기업명: {
+      rich_text: [{ text: { content: data.companyName } }],
+    },
+    신청일: {
+      date: { start: new Date().toISOString().split("T")[0] },
+    },
+  };
+
+  // Portfolios DB에서 회사명으로 검색하여 relation 연결
+  const portfoliosDbId = process.env.NOTION_PORTFOLIOS_DB_ID;
+  if (portfoliosDbId) {
+    try {
+      const search = await notion.databases.query({
+        database_id: portfoliosDbId,
+        filter: { property: "회사명", title: { equals: data.companyName } },
+        page_size: 1,
+      });
+      if (search.results.length > 0) {
+        properties["신청 회사"] = {
+          relation: [{ id: search.results[0].id }],
+        };
+      }
+    } catch (error) {
+      console.error("Portfolio lookup failed:", error);
+    }
+  }
+
+  return await notion.pages.create({
+    parent: { database_id: ISSUE_TICKET_DB_ID },
+    properties,
+  });
 }
 
 // Partners DB에서 파일과 미디어 속성의 로고 URL 가져오기
