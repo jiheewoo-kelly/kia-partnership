@@ -1,73 +1,118 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import Image from "next/image";
+import { useState, useEffect } from "react";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
-      <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 bg-blue rounded-md flex items-center justify-center">
-            <span className="text-white font-bold text-[10px]">KI</span>
-          </div>
-          <span className="font-bold text-main text-sm hidden sm:inline">
-            한국투자액셀러레이터
-          </span>
-        </Link>
-
-        <nav className="hidden md:flex items-center gap-8">
+    <header
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
+        scrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : "bg-transparent"
+      }`}
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
           <Link
-            href="/news"
-            className="text-sm text-gray-400 hover:text-main transition-colors"
+            href="/"
+            className="select-none transition-all duration-500"
+            aria-label="파트너십 홈으로"
           >
-            소식
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 bg-blue rounded-md flex items-center justify-center">
+                <span className="text-white font-bold text-[10px]">KI</span>
+              </div>
+              <span className="font-bold text-main text-sm hidden sm:inline tracking-wide">
+                한국투자액셀러레이터
+              </span>
+            </div>
           </Link>
-          <Link
-            href="/perks"
-            className="text-sm text-gray-400 hover:text-main transition-colors"
+
+          <nav
+            className="hidden md:flex items-center gap-8"
+            aria-label="메인 내비게이션"
           >
-            Perks
-          </Link>
-        </nav>
-
-        <button
-          className="md:hidden p-2 text-gray-400"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="메뉴 열기"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {mobileOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
-      </div>
-
-      {mobileOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white">
-          <nav className="flex flex-col px-6 py-4 gap-4">
             <Link
               href="/news"
-              className="text-sm text-gray-400 hover:text-main"
-              onClick={() => setMobileOpen(false)}
+              className="text-[13px] font-medium transition-colors duration-500 tracking-wide text-gray-500 hover:text-main"
             >
               소식
             </Link>
             <Link
               href="/perks"
-              className="text-sm text-gray-400 hover:text-main"
-              onClick={() => setMobileOpen(false)}
+              className="text-[13px] font-medium transition-colors duration-500 tracking-wide text-gray-500 hover:text-main"
             >
               Perks
             </Link>
+            <Link
+              href="/support"
+              className="text-[13px] font-medium transition-colors duration-500 tracking-wide text-gray-500 hover:text-main"
+            >
+              Support
+            </Link>
           </nav>
+
+          <button
+            type="button"
+            aria-label={mobileOpen ? "메뉴 닫기" : "메뉴 열기"}
+            aria-expanded={mobileOpen}
+            className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded-none transition-colors hover:bg-main/5"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <span
+              className={`block h-px w-5 transition-all duration-300 bg-main ${
+                mobileOpen ? "rotate-45 translate-y-[3px]" : ""
+              }`}
+            />
+            <span
+              className={`block h-px w-5 transition-all duration-300 bg-main ${
+                mobileOpen ? "-rotate-45 -translate-y-[3px]" : ""
+              }`}
+            />
+          </button>
         </div>
-      )}
+      </div>
+
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          mobileOpen ? "max-h-80" : "max-h-0"
+        }`}
+        aria-hidden={!mobileOpen}
+      >
+        <nav className="flex flex-col px-4 py-3 gap-1 bg-white/98 backdrop-blur-md">
+          <Link
+            href="/news"
+            className="text-left text-sm text-gray-600 hover:text-main font-medium py-3 border-b border-gray-50 transition-colors duration-200"
+            onClick={() => setMobileOpen(false)}
+          >
+            소식
+          </Link>
+          <Link
+            href="/perks"
+            className="text-left text-sm text-gray-600 hover:text-main font-medium py-3 border-b border-gray-50 transition-colors duration-200"
+            onClick={() => setMobileOpen(false)}
+          >
+            Perks
+          </Link>
+          <Link
+            href="/support"
+            className="text-left text-sm text-gray-600 hover:text-main font-medium py-3 transition-colors duration-200"
+            onClick={() => setMobileOpen(false)}
+          >
+            Support
+          </Link>
+        </nav>
+      </div>
     </header>
   );
 }

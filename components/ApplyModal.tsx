@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PerkItem } from "@/lib/perks-data";
+import CompanySearchInput from "@/components/CompanySearchInput";
 
 interface ApplyModalProps {
   perk: PerkItem;
@@ -15,6 +16,7 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
     email: "",
     memo: "",
   });
+  const [portfolioId, setPortfolioId] = useState<string | null>(null);
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -32,6 +34,7 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
           perkId: perk.id,
           perkName: perk.partnerName,
           partnerPageId: perk.notionPageId,
+          portfolioId,
         }),
       });
 
@@ -112,15 +115,12 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
                 <label className="block text-xs font-semibold text-main mb-1.5">
                   회사명 *
                 </label>
-                <input
-                  type="text"
-                  required
+                <CompanySearchInput
                   value={form.companyName}
-                  onChange={(e) =>
-                    setForm({ ...form, companyName: e.target.value })
-                  }
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue/40 transition-colors"
-                  placeholder="포트폴리오사 이름"
+                  onChange={(name, id) => {
+                    setForm({ ...form, companyName: name });
+                    setPortfolioId(id);
+                  }}
                 />
               </div>
               <div>

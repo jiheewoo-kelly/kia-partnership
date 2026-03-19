@@ -6,7 +6,7 @@ import Pagination from "@/components/Pagination";
 
 export const dynamic = "force-dynamic";
 
-const NEWS_CATEGORIES = ["세션", "지원사", "피드백", "운영일지", "배치운영", "데모데이", "커뮤니티"];
+const NEWS_CATEGORIES = ["세션", "바른동행 지원", "데모데이", "커뮤니티", "대관"];
 
 export default async function NewsPage({
   searchParams,

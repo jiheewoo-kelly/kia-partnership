@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className="font-pretendard antialiased bg-white text-main min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pt-16">{children}</main>
         <Footer />
       </body>
     </html>
