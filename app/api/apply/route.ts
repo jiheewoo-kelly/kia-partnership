@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { submitApplication } from "@/lib/notion";
+import { submitApplication, checkDuplicateApplication } from "@/lib/notion";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,6 +19,16 @@ export async function POST(request: NextRequest) {
         { error: "올바른 이메일을 입력해주세요." },
         { status: 400 }
       );
+    }
+
+    if (portfolioId && partnerPageId) {
+      const isDuplicate = await checkDuplicateApplication(portfolioId, partnerPageId);
+      if (isDuplicate) {
+        return NextResponse.json(
+          { error: "이미 신청된 혜택입니다." },
+          { status: 409 }
+        );
+      }
     }
 
     await submitApplication({

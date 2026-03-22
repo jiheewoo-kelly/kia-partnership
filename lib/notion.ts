@@ -381,6 +381,28 @@ export async function submitSupportTicket(data: {
   });
 }
 
+export async function checkDuplicateApplication(
+  portfolioId: string,
+  partnerPageId: string
+): Promise<boolean> {
+  try {
+    const response = await notion.databases.query({
+      database_id: APPLICATIONS_DB_ID,
+      filter: {
+        and: [
+          { property: "신청 회사", relation: { contains: portfolioId } },
+          { property: "신청 Perk (파트너)", relation: { contains: partnerPageId } },
+        ],
+      },
+      page_size: 1,
+    });
+    return response.results.length > 0;
+  } catch (error) {
+    console.error("Duplicate check failed:", error);
+    return false;
+  }
+}
+
 // Partners DB에서 파일과 미디어 속성의 로고 URL 가져오기
 export async function getPartnerLogos(
   pageIds: string[]

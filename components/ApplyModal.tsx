@@ -18,7 +18,7 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
   });
   const [portfolioId, setPortfolioId] = useState<string | null>(null);
   const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
+    "idle" | "loading" | "success" | "error" | "duplicate"
   >("idle");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,6 +38,10 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
         }),
       });
 
+      if (res.status === 409) {
+        setStatus("duplicate");
+        return;
+      }
       if (!res.ok) throw new Error("신청 실패");
       setStatus("success");
     } catch {
@@ -168,6 +172,11 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
                 />
               </div>
 
+              {status === "duplicate" && (
+                <p className="text-sm text-red-500">
+                  이미 신청된 혜택입니다. 동일한 회사로 같은 혜택을 중복 신청할 수 없습니다.
+                </p>
+              )}
               {status === "error" && (
                 <p className="text-sm text-red-500">
                   신청 중 오류가 발생했습니다. 다시 시도해주세요.
