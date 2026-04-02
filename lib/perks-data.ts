@@ -68,6 +68,27 @@ export const PERKS: PerkItem[] = [
     notionPageId: "319554b4-bcb5-817a-8744-c6f6ed727585",
   },
   {
+    id: "spin",
+    partnerName: "S.Pin Technology",
+    category: "클라우드 크레딧",
+    description:
+      "Microsoft 전문 파트너 S.Pin Technology가 Azure 클라우드, GitHub, Azure OpenAI 비용을 최대 1,000만원 상당 지원하며, SaaS 홍보·마케팅 펀드도 제공합니다. Microsoft 지원 크레딧과 중복 적용 가능합니다.",
+    logo: null,
+    discount: "최대 1,000만원 상당",
+    details: [
+      "Azure 클라우드 비용 지원 — 인프라 전환·확장용 크레딧",
+      "GitHub 라이선스 비용 지원 — Advanced Security, Copilot 등",
+      "Azure OpenAI 비용 지원 — AI 기능 개발·PoC용 API 크레딧",
+      "세 가지 합산 Azure 도입 비용 1,000만원 상당 지원",
+      "Microsoft 지원 크레딧과 중복 적용 가능",
+      "S.Pin 파트너 및 고객사 150개사 대상 정기 SaaS 솔루션 소개",
+      "국내 GTM을 위한 고객 대상 세미나·웨비나 비용 회당 최대 300만원 지원",
+    ],
+    applyNote: "",
+    status: "활성",
+    notionPageId: null,
+  },
+  {
     id: "aws",
     partnerName: "AWS",
     category: "클라우드 크레딧",
