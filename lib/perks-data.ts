@@ -86,7 +86,7 @@ export const PERKS: PerkItem[] = [
     ],
     applyNote: "",
     status: "활성",
-    notionPageId: null,
+    notionPageId: "336554b4-bcb5-8127-a072-c5cdf00e08a1",
   },
   {
     id: "aws",
