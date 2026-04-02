@@ -72,6 +72,12 @@ export default function PRSupportPage() {
     setStatus("loading");
     setErrorMsg("");
 
+    if (images.length === 0) {
+      setErrorMsg("기사 이미지를 1장 이상 첨부해주세요.");
+      setStatus("error");
+      return;
+    }
+
     try {
       const imageUrls = await uploadImages();
 
@@ -180,7 +186,7 @@ export default function PRSupportPage() {
           </div>
           <div>
             <label className="block text-xs font-semibold text-main mb-1.5">
-              기사 이미지 <span className="font-normal text-gray-400">(최대 5MB, JPG/PNG/WebP/GIF)</span>
+              기사 이미지 * <span className="font-normal text-gray-400">(최대 5MB, JPG/PNG/WebP/GIF)</span>
             </label>
             <div className="flex flex-wrap gap-3 mb-3">
               {images.map((img, i) => (
@@ -246,9 +252,10 @@ export default function PRSupportPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-main mb-1.5">연락처</label>
+              <label className="block text-xs font-semibold text-main mb-1.5">연락처 *</label>
               <input
                 type="tel"
+                required
                 value={form.contactPhone}
                 onChange={(e) => setForm({ ...form, contactPhone: e.target.value })}
                 className={inputClass}
