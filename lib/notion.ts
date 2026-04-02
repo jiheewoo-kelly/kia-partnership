@@ -6,6 +6,7 @@ const NEWS_DB_ID = process.env.NOTION_NEWS_DB_ID!;
 const PERKS_DB_ID = process.env.NOTION_PERKS_DB_ID!;
 const APPLICATIONS_DB_ID = process.env.NOTION_APPLICATIONS_DB_ID!;
 const ISSUE_TICKET_DB_ID = process.env.NOTION_ISSUE_TICKET_DB_ID!;
+const VENUE_DB_ID = process.env.NOTION_VENUE_DB_ID!;
 
 export interface NewsItem {
   id: string;
@@ -312,9 +313,6 @@ export async function submitPRRequest(data: {
     이메일: {
       email: data.contactEmail,
     },
-    기업명: {
-      rich_text: [{ text: { content: data.companyName } }],
-    },
     "해결 일자": {
       status: { name: "시작 전" },
     },
@@ -359,9 +357,6 @@ export async function submitSupportTicket(data: {
     이메일: {
       email: data.contactEmail,
     },
-    기업명: {
-      rich_text: [{ text: { content: data.companyName } }],
-    },
     "해결 일자": {
       status: { name: "시작 전" },
     },
@@ -400,6 +395,126 @@ export async function checkDuplicateApplication(
   } catch (error) {
     console.error("Duplicate check failed:", error);
     return false;
+  }
+}
+
+export async function submitVenueReservation(data: {
+  eventName: string;
+  desiredDate: string;
+  startTime: string;
+  endTime: string;
+  companyName: string;
+  organizer: string;
+  eventField: string;
+  eventType: string;
+  eventDescription: string;
+  participants: string;
+  isPublic: string;
+  fee: string;
+  website?: string;
+  contactName: string;
+  contactEmail: string;
+  phone: string;
+  portfolioId?: string;
+}) {
+  const properties: Record<string, any> = {
+    "행사명": {
+      title: [{ text: { content: data.eventName } }],
+    },
+    "예약 날짜": {
+      date: { start: data.desiredDate },
+    },
+    "시작 시간": {
+      rich_text: [{ text: { content: data.startTime } }],
+    },
+    "종료 시간": {
+      rich_text: [{ text: { content: data.endTime } }],
+    },
+    "상태": {
+      select: { name: "대기" },
+    },
+    "기업명": {
+      rich_text: [{ text: { content: data.companyName } }],
+    },
+    "개최/주최자": {
+      rich_text: [{ text: { content: data.organizer } }],
+    },
+    "행사 분야": {
+      select: { name: data.eventField },
+    },
+    "행사 분류": {
+      select: { name: data.eventType },
+    },
+    "행사 소개": {
+      rich_text: [{ text: { content: data.eventDescription } }],
+    },
+    "참가자 구성": {
+      rich_text: [{ text: { content: data.participants } }],
+    },
+    "외부 공개": {
+      select: { name: data.isPublic },
+    },
+    "참가비": {
+      rich_text: [{ text: { content: data.fee } }],
+    },
+    "담당자명": {
+      rich_text: [{ text: { content: data.contactName } }],
+    },
+    "이메일": {
+      email: data.contactEmail,
+    },
+    "연락처": {
+      rich_text: [{ text: { content: data.phone } }],
+    },
+  };
+
+  if (data.website) {
+    properties["홈페이지"] = { url: data.website };
+  }
+
+  const portfolioId = data.portfolioId || await findPortfolioCompany(data.companyName);
+  if (portfolioId) {
+    properties["요청자"] = {
+      relation: [{ id: portfolioId }],
+    };
+  }
+
+  return await notion.pages.create({
+    parent: { database_id: VENUE_DB_ID },
+    properties,
+  });
+}
+
+export async function getVenueReservations(): Promise<
+  { title: string; start: string; end: string; date: string }[]
+> {
+  try {
+    const response = await notion.databases.query({
+      database_id: VENUE_DB_ID,
+      filter: {
+        property: "상태",
+        select: { equals: "승인" },
+      },
+      sorts: [{ property: "예약 날짜", direction: "ascending" }],
+    });
+
+    return response.results.map((page: any) => {
+      const props = page.properties;
+      const date = extractDate(props["예약 날짜"]);
+      const startTime = extractText(props["시작 시간"]);
+      const endTime = extractText(props["종료 시간"]);
+      const title = extractText(props["행사명"]);
+
+      return {
+        title,
+        start: date && startTime ? `${date}T${startTime}:00` : date,
+        end: date && endTime ? `${date}T${endTime}:00` : date,
+        date,
+      };
+    });
+  } catch (error) {
+    console.error("Failed to fetch venue reservations:", error);
+    return [];
   }
 }
 
