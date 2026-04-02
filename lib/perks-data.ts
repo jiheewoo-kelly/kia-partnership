@@ -70,7 +70,7 @@ export const PERKS: PerkItem[] = [
   {
     id: "spin",
     partnerName: "S.Pin Technology",
-    category: "클라우드 크레딧",
+    category: "기술지원",
     description:
       "Microsoft 전문 파트너 S.Pin Technology가 Azure 클라우드, GitHub, Azure OpenAI 비용을 최대 1,000만원 상당 지원하며, SaaS 홍보·마케팅 펀드도 제공합니다. Microsoft 지원 크레딧과 중복 적용 가능합니다.",
     logo: "/spin-logo.png",
