@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 
 export default function Header() {
@@ -28,14 +27,9 @@ export default function Header() {
             className="select-none transition-all duration-500"
             aria-label="파트너십 홈으로"
           >
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-blue rounded-md flex items-center justify-center">
-                <span className="text-white font-bold text-[10px]">KI</span>
-              </div>
-              <span className="font-bold text-main text-sm hidden sm:inline tracking-wide">
-                한국투자액셀러레이터
-              </span>
-            </div>
+            <span className="font-bold text-main text-sm tracking-wide">
+              한국투자액셀러레이터 SYNERGY STATION
+            </span>
           </Link>
 
           <nav

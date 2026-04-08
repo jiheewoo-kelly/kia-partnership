@@ -30,7 +30,7 @@ export default function Footer() {
           </div>
           <div>
             <h4 className="text-white font-semibold text-xs mb-3">문의</h4>
-            <p className="text-xs">partnership@koreainvestment.ac</p>
+            <p className="text-xs">help@koreainvestment.ac</p>
           </div>
         </div>
         <div className="border-t border-gray-800 mt-10 pt-6 text-xs text-center text-gray-600">
