@@ -15,14 +15,21 @@ interface CompanySearchInputProps {
 
 let cachedCompanies: Company[] | null = null;
 let fetchPromise: Promise<Company[]> | null = null;
+let cacheTime = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5분
 
 function fetchCompanies(): Promise<Company[]> {
-  if (cachedCompanies) return Promise.resolve(cachedCompanies);
-  if (fetchPromise) return fetchPromise;
+  if (cachedCompanies && Date.now() - cacheTime < CACHE_TTL) {
+    return Promise.resolve(cachedCompanies);
+  }
+  cachedCompanies = null;
+  fetchPromise = null;
+
   fetchPromise = fetch("/api/portfolios")
     .then((res) => res.json())
     .then((data: Company[]) => {
       cachedCompanies = data;
+      cacheTime = Date.now();
       return data;
     })
     .catch(() => {

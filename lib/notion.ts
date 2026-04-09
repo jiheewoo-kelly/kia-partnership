@@ -120,34 +120,12 @@ export async function getNews(options?: {
   startCursor?: string;
 }): Promise<{ items: NewsItem[]; nextCursor: string | null }> {
   try {
-    const filter: any[] = [
-      {
-        property: "날짜",
-        date: { on_or_after: "2026-01-01" },
-      },
-      {
-        or: [
-          { property: "상태", select: { equals: "모집 중" } },
-          { property: "상태", select: { equals: "종료" } },
-        ],
-      },
-    ];
-    if (options?.category) {
-      filter.push({
-        property: "구분",
-        select: { equals: options.category },
-      });
-    }
+    const categoryFilter = options?.category
+      ? { property: "구분", select: { equals: options.category } }
+      : null;
+    const pageSize = options?.pageSize || 12;
 
-    const response = await notion.databases.query({
-      database_id: NEWS_DB_ID,
-      page_size: options?.pageSize || 12,
-      start_cursor: options?.startCursor || undefined,
-      filter: { and: filter },
-      sorts: [{ property: "날짜", direction: "descending" }],
-    });
-
-    const items: NewsItem[] = response.results.map((page: any) => ({
+    const toNewsItem = (page: any): NewsItem => ({
       id: page.id,
       title: extractText(page.properties["항목명"]),
       category: extractSelect(page.properties["구분"]),
@@ -156,9 +134,53 @@ export async function getNews(options?: {
       thumbnail: extractFile(page.properties["포스터"]),
       link: extractUrl(page.properties["신청링크"]),
       status: extractSelect(page.properties["상태"]),
-    }));
+    });
 
-    return { items, nextCursor: response.next_cursor };
+    // 1) Coming Soon 항목을 먼저 전부 가져오기 (1페이지에서만)
+    let comingSoonItems: NewsItem[] = [];
+    if (!options?.startCursor) {
+      const csFilter = categoryFilter
+        ? { and: [{ property: "상태", select: { equals: "Coming Soon" } }, categoryFilter] }
+        : { property: "상태", select: { equals: "Coming Soon" } };
+
+      const csResponse = await notion.databases.query({
+        database_id: NEWS_DB_ID,
+        filter: csFilter,
+        sorts: [{ property: "항목명", direction: "ascending" }],
+      });
+      comingSoonItems = csResponse.results.map(toNewsItem);
+    }
+
+    // 2) 나머지 항목 (모집 중 / 종료, 2026년 이후)
+    const restBranches: any[] = [
+      {
+        and: [
+          { property: "날짜", date: { on_or_after: "2026-01-01" } },
+          { property: "상태", select: { equals: "모집 중" } },
+          ...(categoryFilter ? [categoryFilter] : []),
+        ],
+      },
+      {
+        and: [
+          { property: "날짜", date: { on_or_after: "2026-01-01" } },
+          { property: "상태", select: { equals: "종료" } },
+          ...(categoryFilter ? [categoryFilter] : []),
+        ],
+      },
+    ];
+
+    const restSize = Math.max(1, pageSize - comingSoonItems.length);
+    const restResponse = await notion.databases.query({
+      database_id: NEWS_DB_ID,
+      page_size: restSize,
+      start_cursor: options?.startCursor || undefined,
+      filter: { or: restBranches },
+      sorts: [{ property: "날짜", direction: "descending" }],
+    });
+    const restItems: NewsItem[] = restResponse.results.map(toNewsItem);
+
+    const items = [...comingSoonItems, ...restItems];
+    return { items, nextCursor: restResponse.next_cursor };
   } catch (error) {
     console.error("Failed to fetch news:", error);
     return { items: [], nextCursor: null };

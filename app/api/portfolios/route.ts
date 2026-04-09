@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getPortfolioCompanies } from "@/lib/notion";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const companies = await getPortfolioCompanies();

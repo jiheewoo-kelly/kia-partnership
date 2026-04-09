@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getPartnerLogos } from "@/lib/notion";
 import { PERKS } from "@/lib/perks-data";
 
-export const revalidate = 3600; // 1시간마다 갱신
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const pageIds = PERKS.map((p) => p.notionPageId).filter(
