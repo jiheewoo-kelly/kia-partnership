@@ -18,7 +18,7 @@ export default function PerksPage() {
   }, []);
 
   const filtered = category
-    ? PERKS.filter((p) => p.category === category && p.status === "활성")
+    ? PERKS.filter((p) => p.categories.includes(category) && p.status === "활성")
     : PERKS.filter((p) => p.status === "활성");
 
   const perksWithLogos = filtered.map((p) => ({

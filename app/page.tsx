@@ -106,7 +106,7 @@ export default async function HomePage() {
                     )}
                   </div>
                   <span className="text-blue text-xs md:text-sm font-semibold mb-1">
-                    {item.category}
+                    {item.categories[0]}
                   </span>
                   <h3 className="text-sm md:text-base font-bold text-main mb-1 md:mb-2">
                     {item.partnerName}

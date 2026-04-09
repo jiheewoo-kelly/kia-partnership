@@ -30,7 +30,7 @@ export default function PerkCard({
 
       {/* 카테고리 + 할인 */}
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-blue text-sm font-semibold">{item.category}</span>
+        <span className="text-blue text-sm font-semibold">{item.categories[0]}</span>
         {item.discount && (
           <>
             <span className="text-gray-200">·</span>
