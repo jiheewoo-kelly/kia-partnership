@@ -7,6 +7,19 @@ export const metadata: Metadata = {
   title: "파트너십 - 한국투자액셀러레이터",
   description:
     "한국투자액셀러레이터 포트폴리오사를 위한 파트너십 프로그램. 클라우드, 마케팅, 법률 등 다양한 파트너 혜택을 확인하세요.",
+  openGraph: {
+    title: "파트너십 - 한국투자액셀러레이터",
+    description:
+      "한국투자액셀러레이터 포트폴리오사를 위한 파트너십 프로그램. 클라우드, 마케팅, 법률 등 다양한 파트너 혜택을 확인하세요.",
+    images: [{ url: "/og-image.png" }],
+    type: "website",
+    locale: "ko_KR",
+  },
+  twitter: {
+    card: "summary",
+    title: "파트너십 - 한국투자액셀러레이터",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
