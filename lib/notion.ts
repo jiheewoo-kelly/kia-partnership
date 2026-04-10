@@ -62,6 +62,21 @@ function extractFile(property: any): string | null {
   return null;
 }
 
+export async function verifyPortfolioId(portfolioId: string): Promise<boolean> {
+  const portfoliosDbId = process.env.NOTION_PORTFOLIOS_DB_ID;
+  if (!portfoliosDbId || !portfolioId) return false;
+  try {
+    const page: any = await notion.pages.retrieve({ page_id: portfolioId });
+    const parentDbId: string | undefined = page?.parent?.database_id;
+    if (!parentDbId) return false;
+    const normalize = (id: string) => id.replace(/-/g, "").toLowerCase();
+    return normalize(parentDbId) === normalize(portfoliosDbId);
+  } catch (error) {
+    console.error("Portfolio verification failed:", error);
+    return false;
+  }
+}
+
 async function findPortfolioCompany(companyName: string): Promise<string | null> {
   const portfoliosDbId = process.env.NOTION_PORTFOLIOS_DB_ID;
   if (!portfoliosDbId) return null;

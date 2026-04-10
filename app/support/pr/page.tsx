@@ -17,7 +17,7 @@ export default function PRSupportPage() {
   });
   const [portfolioId, setPortfolioId] = useState<string | null>(null);
   const [images, setImages] = useState<{ file: File; preview: string }[]>([]);
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error" | "forbidden">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleImageAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,14 +69,20 @@ export default function PRSupportPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("loading");
     setErrorMsg("");
+
+    if (!portfolioId) {
+      setStatus("forbidden");
+      return;
+    }
 
     if (images.length === 0) {
       setErrorMsg("기사 이미지를 1장 이상 첨부해주세요.");
       setStatus("error");
       return;
     }
+
+    setStatus("loading");
 
     try {
       const imageUrls = await uploadImages();
@@ -87,6 +93,10 @@ export default function PRSupportPage() {
         body: JSON.stringify({ ...form, imageUrls, portfolioId }),
       });
 
+      if (res.status === 403) {
+        setStatus("forbidden");
+        return;
+      }
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.detail || data.error || "신청 실패");
@@ -149,8 +159,14 @@ export default function PRSupportPage() {
               onChange={(name, id) => {
                 setForm({ ...form, companyName: name });
                 setPortfolioId(id);
+                if (status === "forbidden") setStatus("idle");
               }}
             />
+            {form.companyName && !portfolioId && (
+              <p className="mt-1.5 text-xs text-gray-400">
+                목록에서 회사를 선택해주세요.
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-xs font-semibold text-main mb-1.5">기사 제목 *</label>
@@ -265,13 +281,22 @@ export default function PRSupportPage() {
           </div>
         </div>
 
-        {(status === "error" || errorMsg) && (
-          <p className="text-sm text-red-500">{errorMsg || "신청 중 오류가 발생했습니다. 다시 시도해주세요."}</p>
+        {status === "forbidden" && (
+          <p className="text-sm text-red-500">
+            포트폴리오사만 신청할 수 있습니다. 문의는{" "}
+            <a href="mailto:help@koreainvestment.ac" className="underline">
+              help@koreainvestment.ac
+            </a>
+            {" "}로 부탁드립니다.
+          </p>
+        )}
+        {status === "error" && errorMsg && (
+          <p className="text-sm text-red-500">{errorMsg}</p>
         )}
 
         <button
           type="submit"
-          disabled={status === "loading"}
+          disabled={status === "loading" || !portfolioId}
           className="w-full py-3.5 bg-blue text-white rounded-full text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {status === "loading" ? "제출 중..." : "PR 지원 요청하기"}

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { submitSupportTicket } from "@/lib/notion";
+import { submitSupportTicket, verifyPortfolioId } from "@/lib/notion";
+
+const PORTFOLIO_REQUIRED_MESSAGE =
+  "포트폴리오사만 신청할 수 있습니다. 문의는 help@koreainvestment.ac 로 부탁드립니다.";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,6 +22,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "올바른 이메일을 입력해주세요." },
         { status: 400 }
+      );
+    }
+
+    if (!portfolioId || !(await verifyPortfolioId(portfolioId))) {
+      return NextResponse.json(
+        { error: PORTFOLIO_REQUIRED_MESSAGE, code: "PORTFOLIO_REQUIRED" },
+        { status: 403 }
       );
     }
 

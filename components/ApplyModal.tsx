@@ -18,11 +18,16 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
   });
   const [portfolioId, setPortfolioId] = useState<string | null>(null);
   const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error" | "duplicate"
+    "idle" | "loading" | "success" | "error" | "duplicate" | "forbidden"
   >("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!portfolioId) {
+      setStatus("forbidden");
+      return;
+    }
     setStatus("loading");
 
     try {
@@ -38,11 +43,20 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
         }),
       });
 
+      if (res.status === 403) {
+        setStatus("forbidden");
+        return;
+      }
       if (res.status === 409) {
         setStatus("duplicate");
         return;
       }
-      if (!res.ok) throw new Error("신청 실패");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setErrorMsg(data.error || "신청 중 오류가 발생했습니다. 다시 시도해주세요.");
+        setStatus("error");
+        return;
+      }
       setStatus("success");
     } catch {
       setStatus("error");
@@ -124,8 +138,14 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
                   onChange={(name, id) => {
                     setForm({ ...form, companyName: name });
                     setPortfolioId(id);
+                    if (status === "forbidden") setStatus("idle");
                   }}
                 />
+                {form.companyName && !portfolioId && (
+                  <p className="mt-1.5 text-xs text-gray-400">
+                    목록에서 회사를 선택해주세요.
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-semibold text-main mb-1.5">
@@ -177,15 +197,24 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
                   이미 신청된 혜택입니다. 동일한 회사로 같은 혜택을 중복 신청할 수 없습니다.
                 </p>
               )}
+              {status === "forbidden" && (
+                <p className="text-sm text-red-500">
+                  포트폴리오사만 신청할 수 있습니다. 문의는{" "}
+                  <a href="mailto:help@koreainvestment.ac" className="underline">
+                    help@koreainvestment.ac
+                  </a>
+                  {" "}로 부탁드립니다.
+                </p>
+              )}
               {status === "error" && (
                 <p className="text-sm text-red-500">
-                  신청 중 오류가 발생했습니다. 다시 시도해주세요.
+                  {errorMsg || "신청 중 오류가 발생했습니다. 다시 시도해주세요."}
                 </p>
               )}
 
               <button
                 type="submit"
-                disabled={status === "loading"}
+                disabled={status === "loading" || !portfolioId}
                 className="w-full py-3 bg-blue text-white rounded-full text-sm font-semibold hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {status === "loading" ? "신청 중..." : "신청하기"}

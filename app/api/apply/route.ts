@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { submitApplication, checkDuplicateApplication } from "@/lib/notion";
+import { submitApplication, checkDuplicateApplication, verifyPortfolioId } from "@/lib/notion";
+
+const PORTFOLIO_REQUIRED_MESSAGE =
+  "포트폴리오사만 신청할 수 있습니다. 문의는 help@koreainvestment.ac 로 부탁드립니다.";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,11 +24,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (portfolioId && partnerPageId) {
+    if (!portfolioId || !(await verifyPortfolioId(portfolioId))) {
+      return NextResponse.json(
+        { error: PORTFOLIO_REQUIRED_MESSAGE, code: "PORTFOLIO_REQUIRED" },
+        { status: 403 }
+      );
+    }
+
+    if (partnerPageId) {
       const isDuplicate = await checkDuplicateApplication(portfolioId, partnerPageId);
       if (isDuplicate) {
         return NextResponse.json(
-          { error: "이미 신청된 혜택입니다." },
+          { error: "이미 신청된 혜택입니다. 동일한 회사로 같은 혜택을 중복 신청할 수 없습니다." },
           { status: 409 }
         );
       }
