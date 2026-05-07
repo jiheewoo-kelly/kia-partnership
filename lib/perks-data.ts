@@ -42,7 +42,6 @@ export const PERKS: PerkItem[] = [
       "$5,000+α 상당 Claude API 크레딧 (6개월 내 사용)",
       "Tier 4 등급 업그레이드 (높은 Rate Limit)",
       "Anthropic 계정팀 맞춤 지원 및 전용 문의 메일",
-      "$10,000 이상 필요 시 별도 문의 가능",
     ],
     applyNote: "회사 이메일로 Anthropic Console 가입 필요",
     status: "활성",
@@ -175,6 +174,57 @@ export const PERKS: PerkItem[] = [
     applyNote: "KIAC 사업운영실을 통해 신청",
     status: "활성",
     notionPageId: "33c554b4-bcb5-8116-8a09-ede31d67ec28",
+  },
+  {
+    id: "ncp",
+    partnerName: "네이버클라우드",
+    categories: ["클라우드/인프라"],
+    description:
+      "네이버클라우드 Greenhouse 프로그램을 통해 최대 1,000만원 인프라 크레딧을 제공하며, 성장 단계별 추가 지원(PMF 검증, GTM, 투자 연계)도 가능합니다.",
+    logo: null,
+    discount: "최대 1,000만원 크레딧",
+    details: [
+      "최대 1,000만원 인프라 크레딧 제공 (핵심 혜택)",
+      "인프라 구성·보안 컨설팅 지원",
+      "성장 단계별 추가 트랙: PMF 검증, GTM 협력, 전략적 투자 검토",
+    ],
+    applyNote: "네이버클라우드 신규 고객, 사업자 자격 가입 필요",
+    status: "활성",
+    notionPageId: "34a554b4-bcb5-811e-9806-fbf52f6159e4",
+  },
+  {
+    id: "snslab",
+    partnerName: "S&S LAB",
+    categories: ["오피스/공간"],
+    description:
+      "S&S LAB 공유실험실(성수/구로) 이용 시 KIAC 포트폴리오사 대상 특별 할인 혜택을 제공합니다. 투어 신청 후 개별 상담 시 할인 조건을 안내드립니다.",
+    logo: null,
+    discount: "포트폴리오사 특별 할인",
+    details: [
+      "S&S LAB 공유실험실(성수/구로) 이용 할인",
+      "KIAC 포트폴리오사 대상 특별 가격 적용",
+      "투어 신청 후 개별 상담 시 할인 조건 안내",
+    ],
+    applyNote: "투어 신청 후 상담 시 할인 안내",
+    status: "활성",
+    notionPageId: null,
+  },
+  {
+    id: "zuzu",
+    partnerName: "ZUZU",
+    categories: ["법무/행정"],
+    description:
+      "ZUZU Standard 요금제 2달 무료 체험을 제공하며, 한투액 투자로 신규 법인 설립 시 Standard 요금제 1년 무료(60만원 상당) 혜택을 추가 제공합니다.",
+    logo: null,
+    discount: "최대 60만원 상당",
+    details: [
+      "Standard 요금제 2달 무료 체험",
+      "한투액 투자로 신규 법인 설립 시 Standard 1년 무료 (60만원 상당)",
+      "프리미엄 정관 기반 안정적 법인설립 지원",
+    ],
+    applyNote: "택 1 혜택 (무료체험 또는 법인설립 패키지)",
+    status: "활성",
+    notionPageId: null,
   },
 ];
 
