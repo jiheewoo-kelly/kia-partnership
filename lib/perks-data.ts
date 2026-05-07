@@ -207,7 +207,7 @@ export const PERKS: PerkItem[] = [
     ],
     applyNote: "투어 신청 후 상담 시 할인 안내",
     status: "활성",
-    notionPageId: null,
+    notionPageId: "359554b4-bcb5-81dc-8fe7-c0c91b7a853b",
   },
   {
     id: "zuzu",
@@ -224,7 +224,7 @@ export const PERKS: PerkItem[] = [
     ],
     applyNote: "택 1 혜택 (무료체험 또는 법인설립 패키지)",
     status: "활성",
-    notionPageId: null,
+    notionPageId: "359554b4-bcb5-812a-946c-d6727cab71c8",
   },
 ];
 
