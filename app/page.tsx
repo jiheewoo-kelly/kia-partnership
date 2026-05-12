@@ -5,7 +5,7 @@ import { PERKS } from "@/lib/perks-data";
 import Image from "next/image";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300; // ISR: 5분마다 재검증
 
 export default async function HomePage() {
   const previewPerks = PERKS.filter((p) => p.status === "활성").slice(0, 6);

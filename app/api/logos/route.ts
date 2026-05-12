@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getPartnerLogos } from "@/lib/notion";
 import { PERKS } from "@/lib/perks-data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 600; // ISR: 10분마다 재검증
 
 export async function GET() {
   const pageIds = PERKS.map((p) => p.notionPageId).filter(
@@ -22,7 +22,9 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: { "Cache-Control": "public, s-maxage=600, stale-while-revalidate=1200" },
+    });
   } catch (error) {
     console.error("Failed to fetch logos:", error);
     return NextResponse.json({});

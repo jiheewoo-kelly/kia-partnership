@@ -1,6 +1,9 @@
 import { Client } from "@notionhq/client";
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
+const notion = new Client({
+  auth: process.env.NOTION_API_KEY,
+  timeoutMs: 15_000, // 15초 타임아웃 (기본 60초 → 빠른 실패)
+});
 
 const NEWS_DB_ID = process.env.NOTION_NEWS_DB_ID!;
 const PERKS_DB_ID = process.env.NOTION_PERKS_DB_ID!;

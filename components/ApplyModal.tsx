@@ -188,7 +188,7 @@ export default function ApplyModal({ perk, onClose }: ApplyModalProps) {
                   }
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue/40 transition-colors resize-none"
                   rows={3}
-                  placeholder="추가 요청사항 (선택)"
+                  placeholder="구체적으로 원하시는 지원 내용을 작성해주세요. (예: 관심 항목, 활용 목적, 예상 사용 규모 등)"
                 />
               </div>
 

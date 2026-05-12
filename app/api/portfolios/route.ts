@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { getPortfolioCompanies } from "@/lib/notion";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 600; // ISR: 10분마다 재검증
 
 export async function GET() {
   try {
     const companies = await getPortfolioCompanies();
-    return NextResponse.json(companies);
+    return NextResponse.json(companies, {
+      headers: { "Cache-Control": "public, s-maxage=600, stale-while-revalidate=1200" },
+    });
   } catch (error: any) {
     console.error("Failed to fetch portfolio companies:", error);
     return NextResponse.json(

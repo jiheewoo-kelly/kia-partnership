@@ -4,7 +4,7 @@ import NewsCard from "@/components/NewsCard";
 import CategoryFilter from "@/components/CategoryFilter";
 import Pagination from "@/components/Pagination";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300; // ISR: 5분마다 재검증
 
 const NEWS_CATEGORIES = ["세션", "바른동행 지원", "데모데이", "커뮤니티", "대관"];
 
