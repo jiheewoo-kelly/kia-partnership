@@ -29,6 +29,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
+      <head>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+      </head>
       <body className="font-pretendard antialiased bg-white text-main min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 pt-16">{children}</main>
