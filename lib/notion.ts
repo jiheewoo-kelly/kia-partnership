@@ -2,8 +2,20 @@ import { Client } from "@notionhq/client";
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
-  timeoutMs: 15_000, // 15초 타임아웃 (기본 60초 → 빠른 실패)
+  timeoutMs: 30_000, // 30초 타임아웃
 });
+
+async function withRetry<T>(fn: () => Promise<T>, retries = 2): Promise<T> {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (i === retries) throw error;
+      await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
+    }
+  }
+  throw new Error("unreachable");
+}
 
 const NEWS_DB_ID = process.env.NOTION_NEWS_DB_ID!;
 const PERKS_DB_ID = process.env.NOTION_PERKS_DB_ID!;
@@ -105,7 +117,7 @@ export async function getPortfolioCompanies(): Promise<{ id: string; name: strin
 
   try {
     do {
-      const response: any = await notion.databases.query({
+      const response: any = await withRetry(() => notion.databases.query({
         database_id: portfoliosDbId,
         filter: {
           and: [
@@ -116,7 +128,7 @@ export async function getPortfolioCompanies(): Promise<{ id: string; name: strin
         sorts: [{ property: "회사명", direction: "ascending" }],
         page_size: 100,
         start_cursor: cursor,
-      });
+      }));
 
       for (const page of response.results) {
         const name = extractText((page as any).properties["회사명"]);
@@ -161,11 +173,11 @@ export async function getNews(options?: {
         ? { and: [{ property: "상태", select: { equals: "Coming Soon" } }, categoryFilter] }
         : { property: "상태", select: { equals: "Coming Soon" } };
 
-      const csResponse = await notion.databases.query({
+      const csResponse = await withRetry(() => notion.databases.query({
         database_id: NEWS_DB_ID,
         filter: csFilter,
         sorts: [{ property: "항목명", direction: "ascending" }],
-      });
+      }));
       comingSoonItems = csResponse.results.map(toNewsItem);
     }
 
@@ -188,13 +200,13 @@ export async function getNews(options?: {
     ];
 
     const restSize = Math.max(1, pageSize - comingSoonItems.length);
-    const restResponse = await notion.databases.query({
+    const restResponse = await withRetry(() => notion.databases.query({
       database_id: NEWS_DB_ID,
       page_size: restSize,
       start_cursor: options?.startCursor || undefined,
       filter: { or: restBranches },
       sorts: [{ property: "날짜", direction: "descending" }],
-    });
+    }));
     const restItems: NewsItem[] = restResponse.results.map(toNewsItem);
 
     const items = [...comingSoonItems, ...restItems];
